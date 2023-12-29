@@ -4,10 +4,11 @@
 """
 
 import torch
+from pathlib import Path
 
 
 class WrappedBASE:
-    def __init__(self, name_or_path, outputs_dir, device) -> None:
+    def __init__(self, name_or_path: str, outputs_dir: Path, device: str, **kwargs) -> None:
         self.name_or_path = name_or_path
         self.outputs_dir = outputs_dir
         self.device = device

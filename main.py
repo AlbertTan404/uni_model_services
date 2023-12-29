@@ -93,12 +93,23 @@ def main():
     )
 
     app = Flask(__name__)
+
     @app.route('/call', methods=['POST'])
     def call():
-        try:  
-            data = request.json  
-            return model(**data)  
-        except Exception as e:  
+        try:
+            data = request.json
+            return model(**data)
+        except Exception as e:
+            return {"error": str(e)}, 400
+
+    @app.route('/other_func', methods=['POST'])
+    def other_func():
+        try:
+            data = request.json
+            func_name = data.pop('func_name')
+            func = getattr(model, func_name)
+            return func(**data)
+        except Exception as e:
             return {"error": str(e)}, 400
 
     app.run(host=args.host, port=args.port)
