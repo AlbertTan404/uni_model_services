@@ -17,7 +17,7 @@ def parse_args():
         type=str,
         choices=['sd', 'llm', 'densepose', 'smplx', 'test'],
         # required=True,
-        default='test',
+        default='sd',
     )
 
     parser.add_argument(

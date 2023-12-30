@@ -26,8 +26,8 @@ class WrappedDENSEPOSE(WrappedBASE):
         parser = create_argument_parser()
         args = parser.parse_args(args=[
             "dump",
-            "../detectron2/projects/DensePose/configs/densepose_rcnn_R_50_FPN_s1x.yaml",
-            "../../pretrained_models/densepose_rcnn_R_50_FPN_s1x.pkl",
+            str(Path("~/data/projects/detectron2/projects/DensePose/configs/densepose_rcnn_R_50_FPN_s1x.yaml")),
+            str(Path("~/data/pretrained_models/densepose_rcnn_R_50_FPN_s1x.pkl")),
             "input.jpg",
             "--output",
             "dump.pkl"
@@ -37,19 +37,26 @@ class WrappedDENSEPOSE(WrappedBASE):
         self.predictor = DefaultPredictor(cfg)
         self.context = DumpAction.create_context(args, cfg)
 
-        self.img_size = 512
+        img_size = kwargs.get('img_size', 512)
+        self.img_size = img_size
         val_scale = 255.0 / DensePoseDataRelative.N_PART_LABELS
         self.mask_visualizer = MatrixVisualizer(
             inplace=True, cmap=cv2.COLORMAP_VIRIDIS, val_scale=val_scale, alpha=1.0
         )
 
+        self.densepose_outputs_dir = outputs_dir
+        smplx_outputs_dir = kwargs.get('smplx_outputs_dir')
+        if smplx_outputs_dir is None:
+            smplx_outputs_dir = outputs_dir.parent / 'smplx'
+        self.smplx_outputs_dir = smplx_outputs_dir
+
     def generate_densepose_to_session(self, **data):
         session_name = data['session_name']
 
-        densepose_session_dir = densepose_outputs_dir / session_name
+        densepose_session_dir = self.densepose_outputs_dir / session_name
         densepose_session_dir.mkdir()
 
-        for p in smplx_session_dir.glob('*.png'):
+        for p in (self.smplx_outputs_dir / session_name).glob('*.png'):
             img = read_image(str(p))
             idx = p.name.split('.')[0]  # idx.png
 
