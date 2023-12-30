@@ -101,4 +101,4 @@ class WrappedSMPLX(WrappedBASE):
             imageio.imwrite(str(current_save_dir/f'{i}.png'), color)
 
         os.system(self.I2V_COMMAND.format(str(current_save_dir), str(current_save_dir)))
-        return str(current_save_dir)
+        return str(current_save_dir / '0.mp4')

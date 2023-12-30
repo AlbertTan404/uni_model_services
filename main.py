@@ -15,9 +15,9 @@ def parse_args():
     parser.add_argument(
         '--model',
         type=str,
-        choices=['sd', 'llm', 'densepose', 'smplx'],
+        choices=['sd', 'llm', 'densepose', 'smplx', 'test'],
         # required=True,
-        default='sd',
+        default='test',
     )
 
     parser.add_argument(
@@ -88,6 +88,7 @@ def main():
 
     # initialize model
     model_cls = getattr(importlib.import_module(name='models.' + model), 'Wrapped' + model.upper())
+    print(f'launching {model_cls}')
     model = model_cls(
         name_or_path=model_name_or_path, outputs_dir=outputs_dir, device=f'cuda:{args.device}', **extra_kv
     )
