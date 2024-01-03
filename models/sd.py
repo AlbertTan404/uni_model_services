@@ -13,7 +13,7 @@ class WrappedSD(WrappedBASE):
     def switch_scheduler(self, scheduler_name: str):
         scheduler_cls = getattr(diffusers, scheduler_name)
         self.pipe.scheduler = scheduler_cls.from_config(self.pipe.scheduler.config)
-        print(f'scheduler switched to {scheduler_cls}')
+        return f'scheduler switched to {scheduler_cls}'
 
     def call(self, **kwargs):
         image = self.pipe(**kwargs).images[0]
