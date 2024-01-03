@@ -18,6 +18,6 @@ class WrappedSD(WrappedBASE):
     def call(self, **kwargs):
         image = self.pipe(**kwargs).images[0]
 
-        save_path = str(self.outputs_dir / ('_'.join(kwargs['prompt'].split(''))[:20] + '.png'))
+        save_path = str(self.outputs_dir / ('_'.join(kwargs['prompt'].split())[:30] + '.png'))
         image.save(save_path)
         return save_path
