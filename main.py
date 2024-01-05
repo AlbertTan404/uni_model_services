@@ -6,8 +6,37 @@
 
 import argparse
 import importlib
+from typing import Dict
 from pathlib import Path
 from flask import Flask, request
+
+
+def process_kv(extra_kv: Dict[str, str]) -> Dict:
+    for k, v in extra_kv.items():
+        if '.' not in k:
+            continue
+
+        # fp
+        try:
+            val = float(v)
+        except ValueError:
+            pass
+        else:
+            extra_kv[k] = val
+            continue
+        
+        # like torch.float16
+        try:
+            vals = v.split('.')
+            if len(vals) != 2:
+                continue
+            module = importlib.import_module(vals[0])
+            val = getattr(module, vals[1])
+        except:
+            pass
+        else:
+            extra_kv[k] = v
+            continue
 
 
 def parse_args():
