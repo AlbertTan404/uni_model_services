@@ -1,7 +1,6 @@
 from pathlib import Path
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
-
 from models.base import WrappedBASE
 
 
@@ -21,3 +20,8 @@ class WrappedLLM(WrappedBASE):
             **kwargs
         )
         return self.tokenizer.decode(res[0][len(inputs['input_ids'][0]): ])
+
+    def qa(self, **kwargs):
+        prompt_template = '###System: You are a helpful, respectful and honest assistant. ###User:{}. ###Assistant:'
+        kwargs['prompt'] = prompt_template.format(kwargs['prompt'])
+        return self(**kwargs)  # __call__

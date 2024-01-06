@@ -6,6 +6,7 @@
 
 import argparse
 import importlib
+import json
 from typing import Dict
 from pathlib import Path
 from flask import Flask, request
@@ -13,30 +14,40 @@ from flask import Flask, request
 
 def process_kv(extra_kv: Dict[str, str]) -> Dict:
     for k, v in extra_kv.items():
-        if '.' not in k:
-            continue
 
-        # fp
-        try:
-            val = float(v)
-        except ValueError:
-            pass
-        else:
-            extra_kv[k] = val
-            continue
-        
-        # like torch.float16
-        try:
-            vals = v.split('.')
-            if len(vals) != 2:
+        if '.' in v:
+            # fp
+            try:
+                val = float(v)
+            except ValueError:
+                pass
+            else:
+                extra_kv[k] = val
                 continue
-            module = importlib.import_module(vals[0])
-            val = getattr(module, vals[1])
-        except:
-            pass
-        else:
-            extra_kv[k] = v
-            continue
+            
+            # like torch.float16
+            try:
+                vals = v.split('.')
+                if len(vals) != 2:
+                    continue
+                module = importlib.import_module(vals[0])
+                val = getattr(module, vals[1])
+            except:
+                pass
+            else:
+                extra_kv[k] = v
+                continue
+
+        elif v[0] == '{' and v[-1] == '}':
+            try:
+                val = json.loads(v)
+            except:
+                pass
+            else:
+                extra_kv[k] = val
+                continue
+
+    return extra_kv
 
 
 def parse_args():
@@ -114,6 +125,8 @@ def main():
         extra_kv = {k: v for k, v in itertools.pairwise(kv_list)}
     else:
         extra_kv = dict()
+    
+    extra_kv = process_kv(extra_kv)
 
     # initialize model
     model_cls = getattr(importlib.import_module(name='models.' + model), 'Wrapped' + model.upper())
