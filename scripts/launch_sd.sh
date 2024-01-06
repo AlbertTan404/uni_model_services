@@ -1,0 +1,1 @@
+nohup python main.py --model=sd --model_name_or_path=~/data/pretrained_models/stable-diffusion-2-1 --port=6691 --device=0 >sd.out &

@@ -35,6 +35,7 @@ def process_kv(extra_kv: Dict[str, str]) -> Dict:
             except:
                 pass
             else:
+                raise NotImplementedError('`torch_dtype=torch.float16` needs to be fixed')
                 extra_kv[k] = v
                 continue
 
@@ -77,7 +78,7 @@ def parse_args():
         '--model_name_or_path',
         type=str,
         # required=True,
-        default='~/data/pretrained_models/stable-diffusion-2-1'
+        default='~/data/pretrained_models/Mistral-7B-v0.1'
     )
 
     parser.add_argument(

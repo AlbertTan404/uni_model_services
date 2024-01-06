@@ -1,4 +1,5 @@
 from pathlib import Path
+import torch
 from transformers import AutoTokenizer, AutoModelForCausalLM
 
 from models.base import WrappedBASE
@@ -8,7 +9,7 @@ class WrappedLLM(WrappedBASE):
     def __init__(self, name_or_path: str, outputs_dir: Path, device: str, **kwargs) -> None:
         super().__init__(name_or_path, outputs_dir, device, **kwargs)
 
-        self.model = AutoModelForCausalLM.from_pretrained(name_or_path, device_map=device, **kwargs).eval()
+        self.model = AutoModelForCausalLM.from_pretrained(name_or_path, device_map=device, torch_dtype=torch.float16, **kwargs).eval()
         self.tokenizer = AutoTokenizer.from_pretrained(name_or_path)
  
     def call(self, **kwargs):

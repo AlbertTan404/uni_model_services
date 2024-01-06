@@ -1,0 +1,1 @@
+nohup python main.py --model=llm --model_name_or_path=~/data/pretrained_models/Mistral-7B-v0.1 --port=6692 --device=1 >llm.out &
