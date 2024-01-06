@@ -10,12 +10,24 @@ class WrappedSD(WrappedBASE):
 
         pipe_cls = self.get_pipe_cls(name_or_path)
 
+        if pipe_cls == diffusers.StableDiffusionControlNetPipeline:
+            # add controlnet
+            kwargs['controlnet'] = diffusers.ControlNetModel.from_pretrained(name_or_path)
+            # switch name_or_path to base model
+            name_or_path = kwargs.pop('base_model')
+
         self.pipe = pipe_cls.from_pretrained(pretrained_model_name_or_path=name_or_path, torch_dtype=torch.float16, **kwargs).to(device)
     
     @staticmethod
     def get_pipe_cls(name_or_path: str):
-        if 'stable-diffusion-xl' in name_or_path:
+        name_lower = name_or_path.lower()
+
+        if 'controlnet' in name_lower:
+            return diffusers.StableDiffusionControlNetPipeline
+
+        elif 'stable-diffusion-xl' in name_lower:
             return diffusers.StableDiffusionXLPipeline
+
         else:
             return diffusers.StableDiffusionPipeline
 
