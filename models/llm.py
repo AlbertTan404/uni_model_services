@@ -20,7 +20,7 @@ class WrappedLLM(WrappedBASE):
             **inputs,
             **kwargs
         )
-        return self.tokenizer.decode(res[0][len(inputs['input_ids'][0]): ])
+        return self.tokenizer.decode(res[0][len(inputs['input_ids'][0]): ], skip_special_tokens=True)
 
     def qa(self, **kwargs):
         prompt_template = '###System: You are a helpful, respectful and honest assistant. ###User:{}. ###Assistant:'
